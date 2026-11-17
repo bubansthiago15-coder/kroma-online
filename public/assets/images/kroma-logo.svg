@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" role="img" aria-labelledby="title">
+  <title id="title">Kroma</title>
+  <path fill="#8e62f2" d="M4 39 10 5h10l-3 16L32 5h13L27 22l13 17H27L17 26l-2 13z"/>
+  <path fill="#b99aff" d="m20 21 15-16h10L28 22z" opacity=".8"/>
+  <text x="48" y="33" fill="#f7f7fb" font-family="Inter,Arial,sans-serif" font-size="29" font-weight="700" letter-spacing="-1.4">roma</text>
+</svg>
