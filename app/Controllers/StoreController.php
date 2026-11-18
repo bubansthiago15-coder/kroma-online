@@ -170,15 +170,22 @@ final class StoreController {
     $query=$db->prepare('SELECT p.id_producto,p.nombre,p.modelo,p.condicion,COALESCE((SELECT pr.precio_promocional FROM promociones pr WHERE pr.id_producto=p.id_producto AND pr.estado=1 AND NOW() BETWEEN pr.fecha_inicio AND pr.fecha_fin ORDER BY pr.precio_promocional LIMIT 1),p.precio) precio,i.cantidad_disponible FROM productos p JOIN inventario i USING(id_producto) WHERE p.id_producto=? AND p.publicado=1 AND p.estado=1 FOR UPDATE');
     $query->execute([$id]);
     $product=$query->fetch();
-    if(!$product||(int)$product['cantidad_disponible']<$quantity){
-     throw new RuntimeException('Stock insuficiente para '.($product['nombre']??'un producto').'. El carrito se conservó.');
+    if(!$product){
+     throw new RuntimeException('No se pudo realizar el pedido porque uno de los productos ya no está disponible. No se realizó ningún cobro y tu carrito se conservó.');
+    }
+    if((int)$product['cantidad_disponible']<$quantity){
+     $available=(int)$product['cantidad_disponible'];
+     $message=$available<1
+      ? 'No se pudo realizar el pedido: ya no hay stock disponible de «'.$product['nombre'].'».'
+      : 'No se pudo realizar el pedido: el stock de «'.$product['nombre'].'» no alcanza; quedan '.$available.' '.($available===1?'unidad':'unidades').' y solicitaste '.$quantity.'.';
+     throw new RuntimeException($message.' No se realizó ningún cobro y tu carrito se conservó.');
     }
     $units=[];
     if($paymentOutcome==='aprobado'&&$product['condicion']!=='nuevo'){
      $unitQuery=$db->prepare("SELECT id_unidad_usada FROM unidades_usadas WHERE id_producto=? AND estado_disponibilidad='disponible' ORDER BY id_unidad_usada LIMIT $quantity FOR UPDATE");
      $unitQuery->execute([$id]);
      $units=array_map('intval',$unitQuery->fetchAll(PDO::FETCH_COLUMN));
-     if(count($units)!==$quantity)throw new RuntimeException('No hay suficientes unidades individuales disponibles. El carrito se conservó.');
+     if(count($units)!==$quantity)throw new RuntimeException('No se pudo realizar el pedido: ya no hay stock disponible de «'.$product['nombre'].'». No se realizó ningún cobro y tu carrito se conservó.');
     }
     $product['id_producto']=$id;
     $items[]=$product+['cantidad'=>$quantity,'unidades'=>$units,'stock_antes'=>(int)$product['cantidad_disponible']];
@@ -210,12 +217,12 @@ final class StoreController {
     $unitCents=(int)round((float)$item['precio']*100);
     if($approved){
      $inventoryUpdate->execute([$item['cantidad'],$item['id_producto'],$item['cantidad']]);
-     if($inventoryUpdate->rowCount()!==1)throw new RuntimeException('El stock cambió mientras confirmábamos la compra. El carrito se conservó.');
+     if($inventoryUpdate->rowCount()!==1)throw new RuntimeException('No se pudo realizar el pedido porque el stock cambió durante la confirmación. No se realizó ningún cobro y tu carrito se conservó.');
      if($item['unidades']!==[]){
       foreach($item['unidades'] as $unitId){
        $detail->execute([$orderId,$item['id_producto'],$unitId,$item['nombre'],$item['modelo'],$unitCents/100,1,$unitCents/100]);
        $unitUpdate->execute([$unitId,$item['id_producto']]);
-       if($unitUpdate->rowCount()!==1)throw new RuntimeException('Una unidad ya no está disponible. La compra se revirtió.');
+       if($unitUpdate->rowCount()!==1)throw new RuntimeException('No se pudo realizar el pedido porque una unidad dejó de estar disponible. No se realizó ningún cobro y tu carrito se conservó.');
        $movement->execute([$item['id_producto'],$unitId,1,'Compra confirmada',Auth::id(),$orderId]);
       }
      }else{
