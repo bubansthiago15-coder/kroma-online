@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.codex/
+exports/*.zip
+output/pdf/*
+!/output/pdf/.gitkeep
+storage/*
+!/storage/.gitkeep
+!/storage/sessions/
+storage/sessions/*
+!/storage/sessions/.gitkeep

@@ -13,13 +13,15 @@ final class StoreController {
    case 'register':$this->register();return;
    case 'logout':$this->csrf();Auth::logout();header('Location: ?');return;
    case 'cart_add':
+    Auth::requireCustomer();
     $id=(int)($_POST['id']??0);$quantity=filter_var($_POST['cantidad']??1,FILTER_VALIDATE_INT);
     try{if($quantity===false||$quantity<1)throw new RuntimeException('Ingresá una cantidad válida.');Cart::add($id,(int)$quantity);$_SESSION['flash']='Producto agregado al carrito.';}catch(PDOException $error){error_log((string)$error);$_SESSION['flash']='No se pudo actualizar el carrito. Intentá nuevamente.';}catch(RuntimeException $error){$_SESSION['flash']=$error->getMessage();}
     header('Location: '.($_SERVER['HTTP_REFERER']??'?action=catalog'));return;
    case 'cart_update':
+    Auth::requireCustomer();
     $quantities=$_POST['cantidades']??[];$changed=is_array($quantities)?Cart::updateMany($quantities):false;
     $_SESSION['flash']=$changed?'Se ajustó el carrito para respetar el stock disponible.':'Cantidades actualizadas.';header('Location: ?action=checkout');return;
-   case 'cart_remove':Cart::remove((int)($_POST['id']??0));header('Location: ?action=checkout');return;
+   case 'cart_remove':Auth::requireCustomer();Cart::remove((int)($_POST['id']??0));header('Location: ?action=checkout');return;
    case 'checkout':
     Auth::requireLogin();if($_SERVER['REQUEST_METHOD']==='POST'){$this->checkout();return;}
     $cartAdjusted=Cart::normalize();if($cartAdjusted)$_SESSION['flash']='Actualizamos el carrito para que ninguna cantidad supere el stock disponible.';

@@ -1,0 +1,1 @@
+<section class="content"><h1>Mis favoritos</h1><?php if(!$products):?><div class="empty">Todavía no guardaste productos favoritos.</div><?php else:?><div class="grid"><?php foreach($products as $p)product_card($p)?></div><?php endif?></section>

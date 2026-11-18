@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);
+final class Router { public function dispatch():void { $controller=new StoreController();$action=$_POST['action']??$_GET['action']??'home';$allowed=['home','catalog','product','login','register','logout','cart_add','cart_update','cart_remove','checkout','account','profile_save','addresses','address_add','favorites','orders','order','favorite','admin','admin_create_product','admin_save_product','admin_delete_product','admin_stock_adjust','admin_order_update','admin_notification_read','admin_support_status','admin_category_create','admin_category_save','stock','contact','notfound'];if(!in_array($action,$allowed,true)){http_response_code(404);$action='notfound';}$controller->handle($action);} }

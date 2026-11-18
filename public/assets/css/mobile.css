@@ -1,0 +1,175 @@
+/* Mobile layout refinements for the Kroma storefront. */
+@media (max-width: 640px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .wrap {
+    width: min(100% - 24px, 680px);
+  }
+
+  .top .bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 9px 12px;
+    padding: 10px 0;
+  }
+
+  .top .logo {
+    min-width: 0;
+    width: fit-content;
+  }
+
+  .top .logo img {
+    width: clamp(104px, 31vw, 142px);
+    max-height: 38px;
+    object-fit: contain;
+  }
+
+  .top .search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .top .quick {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .top nav {
+    display: flex;
+    min-height: 42px;
+    height: auto;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .top nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .top nav a {
+    min-height: 40px;
+    padding-inline: 9px;
+    white-space: nowrap;
+  }
+
+  .top nav.admin-navigation {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    overflow: visible;
+    padding-block: 6px;
+  }
+
+  .top nav.admin-navigation a {
+    min-height: 40px;
+    justify-content: flex-start;
+    white-space: normal;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .product {
+    min-width: 0;
+    padding: 9px;
+  }
+
+  .product-actions {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .product-actions > .btn,
+  .product-actions > form,
+  .product-actions > form > .lightbtn {
+    min-width: 0;
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter input,
+  .filter select,
+  .filter button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+  }
+
+  .content form input,
+  .content form select,
+  .content form textarea,
+  .content form button,
+  .content form .btn,
+  .detail-info form input,
+  .detail-info form button {
+    min-height: 42px;
+  }
+
+  .detail-info form input[type="number"] {
+    width: 88px !important;
+  }
+
+  .checkout-edit-row {
+    min-width: 0;
+  }
+
+  .checkout-quantity input,
+  .checkout-remove {
+    min-height: 40px;
+  }
+
+  .table {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table td,
+  .table th {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .wrap {
+    width: calc(100% - 20px);
+  }
+
+  .top .quick {
+    gap: 7px;
+  }
+
+  .top .quick a,
+  .top .account-menu-trigger {
+    font-size: 10px;
+  }
+
+  .product-actions > .btn {
+    white-space: normal;
+  }
+
+  .checkout-edit-row {
+    grid-template-columns: 42px minmax(0, 1fr) 58px 34px;
+    gap: 5px;
+  }
+}
