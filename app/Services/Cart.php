@@ -301,10 +301,13 @@ final class Cart
     private static function assertStock(int $stock, int $current, int $requested): void
     {
         if ($stock < 1) {
-            throw new RuntimeException('Este producto está agotado y no se puede agregar.');
+            throw new RuntimeException('Ya no hay stock disponible.');
         }
         if ($current + $requested > $stock) {
-            throw new RuntimeException('Solo hay ' . max(0, $stock - $current) . ' unidad(es) disponible(s) para agregar.');
+            $remaining = max(0, $stock - $current);
+            throw new RuntimeException($remaining === 0
+                ? 'Ya no hay stock disponible.'
+                : 'Ya no hay stock disponible para agregar esa cantidad. Quedan ' . $remaining . ' ' . ($remaining === 1 ? 'unidad disponible.' : 'unidades disponibles.'));
         }
     }
 
